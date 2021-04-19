@@ -1,0 +1,16 @@
+{
+  "name": "checktaproot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "source .env || echo 'Using default configurations' && node index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-bitcoin-rpc": "^1.1.3",
+    "zeromq": "^5.2.6"
+  }
+}
