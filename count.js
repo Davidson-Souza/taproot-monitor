@@ -44,7 +44,7 @@ sock.on("message", function(topic, message)
         totalSoFar += 1;
        
         // Get the header
-        rpc.call("echo", [toHexString(message)], (err, res) =>
+        rpc.call("getblockheader", [toHexString(message)], (err, res) =>
         {
             // Error? Not good!
             if(err)
