@@ -1,11 +1,21 @@
 const count   = require("./count");
 const express = require("express")
+const cathUp  = require("./catchUp");
 
 const app     = express();
 const router  = express.Router();
 
 const PORT    = process.env.PORT || 8080;
 
+// Just in case we missed the window start
+if(count.getStarted())
+{
+    cathUp.catchUp()
+    .then((res) =>
+    {
+        count.setCount(res.c, res.count);
+    });
+}
 router.get("/", (req, res) =>
 {
     res.json
