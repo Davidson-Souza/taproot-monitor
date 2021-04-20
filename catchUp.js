@@ -45,12 +45,13 @@ function countBlocks(now, end, count, next)
         {
             if(!res)
                 return
+
             if (Number(res.result.version) & (1 << DEPLOY_BIT))
             {
 
                 count += 1;
             }
-            if(now != end)
+            if(now != end && res.result.mediantime < WINDOW_END)
                 countBlocks(now + 1, end, count, next);
             else
             {
