@@ -97,5 +97,10 @@ module.exports =
     getLeftToActivate: () =>
     {
         return Math.floor(( ESTIMATED_BLOCK_COUNT * MIN_THRESHOLD ) - assignedCount)
+    },
+    setCount: (assigned, total) =>
+    {
+        assignedCount = assigned;
+        totalSoFar = total;
     }
 }
