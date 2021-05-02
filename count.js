@@ -19,6 +19,8 @@ const DEPLOY_BIT = 2;    // Which bit will be used for signaling?
 const WINDOW_START = 1619222400, WINDOW_END = 1628640000;
 const MIN_THRESHOLD = 90/100; // 90% off the mined blocks
 const ESTIMATED_BLOCK_COUNT = ((WINDOW_END - WINDOW_START)/60) / 10; // How many blocks inside the window?
+const FIRST_BLOCK = 681408;
+const EPOCH_SPAN = 2016;
 
 // RPC is used for fetching the block header
 rpc.init(process.env.RPC_HOST || '127.0.0.1', process.env.RPC_PORT || 8333, process.env.RPC_USER || '', process.env.RPC_PASSWORD || '');
@@ -32,7 +34,7 @@ function toHexString(byteArray) {
   }).join('')
 }
 
-var assignedCount = 0, totalSoFar = 0;
+var assignedCount = 0, totalSoFar = 0, assignedThisEpoch = 0, epoch = 1, totalEpoch = 0;
 
 // Handle ZMQ's notifications
 sock.on("message", function(topic, message) 
@@ -42,7 +44,7 @@ sock.on("message", function(topic, message)
     {
         // We got one!
         totalSoFar += 1;
-       
+        totalEpoch += 1;
         // Get the header
         rpc.call("getblockheader", [toHexString(message)], (err, res) =>
         {
@@ -54,12 +56,19 @@ sock.on("message", function(topic, message)
                 throw new Error(errMsg);
             }
 
-                // let's see wether the bit is set...
-                if (Number(res.result.version) & (1 << DEPLOY_BIT))
-                {
-                    //... if so, we are 1 block closer to the activation!
-                    assignedCount+= 1;
-                }
+            if((res.result.height % EPOCH_SPAN) == 0)
+            {
+                epoch += 1;
+                assignedThisEpoch = 0;
+                totalEpoch = 0;
+            }
+            // let's see wether the bit is set...
+            if (Number(res.result.version) & (1 << DEPLOY_BIT))
+            {
+                //... if so, we are 1 block closer to the activation!
+                assignedThisEpoch += 1;
+                assignedCount+= 1;
+            }
         })
     }
 });
@@ -82,25 +91,25 @@ module.exports =
     },
     getCount: () =>
     {
-        return assignedCount;
+        return assignedThisEpoch;
     },
     getWindowTotal: () =>
     {
-        return totalSoFar;
+        return totalEpoch;
     },
     // How many blocks we still have inside the window?
     getLeftToBeAssigned: () =>
     {        
-        return (ESTIMATED_BLOCK_COUNT - totalSoFar  );
+        return ( EPOCH_SPAN - totalEpoch );
     },
     // How many left to reach the activation threshold?
     getLeftToActivate: () =>
     {
-        return Math.floor(( ESTIMATED_BLOCK_COUNT * MIN_THRESHOLD ) - assignedCount)
+        return Math.floor(( EPOCH_SPAN * MIN_THRESHOLD ) - assignedThisEpoch)
     },
-    setCount: (assigned, total) =>
+    setCount: (_assigned, _total) =>
     {
-        assignedCount = assigned;
-        totalSoFar = total;
+        assignedThisEpoch = _assigned;
+        totalEpoch = _total;
     }
 }

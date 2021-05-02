@@ -6,11 +6,12 @@
  * @license: MIT
  */
 const rpc  = require("node-bitcoin-rpc")
-rpc.init(process.env.RPC_HOST || '127.0.0.1', process.env.RPC_PORT || 8333, process.env.RPC_USER || '', process.env.RPC_PASSWORD || '');
-rpc.setTimeout(process.env.TIMEOUT || 10000);
+rpc.init(process.env.RPC_HOST || '192.168.42.9', process.env.RPC_PORT || 8332, process.env.RPC_USER || '', process.env.RPC_PASSWORD || '');
+rpc.setTimeout(process.env.TIMEOUT || 1000000);
 
 const WINDOW_START = 1619222400, WINDOW_END = 1628640000;
 const DEPLOY_BIT = 2;    // Which bit will be used for signaling? 
+const EPOCH_SPAN = 2016;
 
 // Recursively find the first block inside the window
 function findTheFirstBlockOfTheWindow(height, next)
@@ -48,7 +49,6 @@ function countBlocks(now, end, count, next)
 
             if (Number(res.result.version) & (1 << DEPLOY_BIT))
             {
-
                 count += 1;
             }
             if(now != end && res.result.mediantime < WINDOW_END)
@@ -68,15 +68,24 @@ module.exports =
         {
             rpc.call("getblockchaininfo", [], (err, res) =>
             {
+                if(err)
+                {
+                    throw err
+                }
                 const tip  = res.result.blocks;
-            
-                findTheFirstBlockOfTheWindow(tip, (height) =>
+                const firstEpochBlock = tip - (tip % EPOCH_SPAN);
+                countBlocks(firstEpochBlock, tip, 0, c =>
+                    {
+                        resolve({count, total:(tip - firstEpochBlock)})
+                    })
+                // Find the firs block within the window
+/*                findTheFirstBlockOfTheWindow(tip, (height) =>
                 {
                     countBlocks(height, tip, 0, c =>
                         {
                             resolve({c, count:tip - height});
                         })
-                })
+                })*/
             });
         })
     }

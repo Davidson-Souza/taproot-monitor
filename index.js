@@ -13,7 +13,7 @@ if(count.getStarted())
     cathUp.catchUp()
     .then((res) =>
     {
-        count.setCount(res.c, res.count);
+        count.setCount(res.count, res.total);
     });
 }
 router.get("/", (req, res) =>
