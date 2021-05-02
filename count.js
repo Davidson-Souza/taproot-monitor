@@ -105,7 +105,8 @@ module.exports =
     // How many left to reach the activation threshold?
     getLeftToActivate: () =>
     {
-        return Math.floor(( EPOCH_SPAN * MIN_THRESHOLD ) - assignedThisEpoch)
+        precision = Math.pow(10, 0) 
+        return Math.ceil(( EPOCH_SPAN * MIN_THRESHOLD ) - assignedThisEpoch * precision) / precision
     },
     setCount: (_assigned, _total) =>
     {
