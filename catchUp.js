@@ -7,7 +7,7 @@
  */
 const rpc  = require("node-bitcoin-rpc")
 rpc.init(process.env.RPC_HOST || '192.168.42.9', process.env.RPC_PORT || 8332, process.env.RPC_USER || '', process.env.RPC_PASSWORD || '');
-rpc.setTimeout(process.env.TIMEOUT || 1000000);
+rpc.setTimeout(Number (process.env.TIMEOUT)| || 1000000);
 
 const WINDOW_START = 1619222400, WINDOW_END = 1628640000;
 const DEPLOY_BIT = 2;    // Which bit will be used for signaling? 

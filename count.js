@@ -24,7 +24,7 @@ const EPOCH_SPAN = 2016;
 
 // RPC is used for fetching the block header
 rpc.init(process.env.RPC_HOST || '127.0.0.1', process.env.RPC_PORT || 8333, process.env.RPC_USER || '', process.env.RPC_PASSWORD || '');
-rpc.setTimeout(process.env.TIMEOUT || 10000);
+rpc.setTimeout(Number (process.env.TIMEOUT) || 10000);
 
 // The RPC only allow string, but ZMQ will send a byteArray. This function will convert byteArray in HexString
 function toHexString(byteArray) {
