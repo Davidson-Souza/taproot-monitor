@@ -109,7 +109,7 @@ module.exports =
     },
     setCount: (_assigned, _total) =>
     {
-        assignedThisEpoch = _assigned;
-        totalEpoch = _total;
+        assignedThisEpoch += _assigned;
+        totalEpoch += _total;
     }
 }
