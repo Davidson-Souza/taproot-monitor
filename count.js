@@ -61,6 +61,8 @@ sock.on("message", function(topic, message)
                 epoch += 1;
                 assignedThisEpoch = 0;
                 totalEpoch = 0;
+                firstEpochBlock = res.result.height;
+                lastEpochBlock = res.result.height + EPOCH_SPAN;
             }
             // let's see wether the bit is set...
             if (Number(res.result.version) & (1 << DEPLOY_BIT))
@@ -120,11 +122,12 @@ module.exports =
         precision = Math.pow(10, 0) 
         return Math.ceil(( EPOCH_SPAN * MIN_THRESHOLD ) - assignedThisEpoch * precision) / precision
     },
-    setCount: (_assigned, _total, _firstBlock, _lastBlock) =>
+    setCount: (_assigned, _total, _firstBlock, _lastBlock, _epochCount) =>
     {
         assignedThisEpoch += _assigned;
         totalEpoch += _total;
-        firstEpochBlock = _firstBlock;
-        lastEpochBlock = _lastBlock;
+        firstEpochBlock += _firstBlock;
+        lastEpochBlock += _lastBlock;
+        epoch = _epochCount;
     }
 }

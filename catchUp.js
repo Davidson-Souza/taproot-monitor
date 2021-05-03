@@ -12,6 +12,7 @@ rpc.setTimeout(Number (process.env.TIMEOUT) || 1000000);
 const WINDOW_START = 1619222400, WINDOW_END = 1628640000;
 const DEPLOY_BIT = 2;    // Which bit will be used for signaling? 
 const EPOCH_SPAN = 2016;
+const FIRST_BLOCK = 681408;
 
 // Recursively find the first block inside the window
 function findTheFirstBlockOfTheWindow(height, next)
@@ -73,10 +74,11 @@ module.exports =
                     throw err
                 }
                 const tip  = res.result.blocks;
+                const epoch = Math.floor(tip / FIRST_BLOCK);
                 const firstEpochBlock = (tip - (tip % EPOCH_SPAN));
                 countBlocks(firstEpochBlock, tip, 0, c =>
                     {
-                        resolve({count:c, total:(tip - firstEpochBlock) + 1, firstEpochBlock, lastEpochBlock:(firstEpochBlock + EPOCH_SPAN)})
+                        resolve({count:c, total:(tip - firstEpochBlock) + 1, firstEpochBlock, lastEpochBlock:(firstEpochBlock + EPOCH_SPAN), epoch})
                     })
                 // Find the firs block within the window
 /*                findTheFirstBlockOfTheWindow(tip, (height) =>

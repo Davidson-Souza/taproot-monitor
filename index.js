@@ -1,6 +1,7 @@
 const count   = require("./count");
 const express = require("express")
 const cathUp  = require("./catchUp");
+const { getEpochNumber } = require("./count");
 
 const app     = express();
 const router  = express.Router();
@@ -13,7 +14,7 @@ if(count.getStarted())
     cathUp.catchUp()
     .then((res) =>
     {
-        count.setCount(res.count, res.total, res.firstEpochBlock, res.lastEpochBlock);
+        count.setCount(res.count, res.total, res.firstEpochBlock, res.lastEpochBlock, res.epoch);
     });
 }
 router.get("/", (req, res) =>
@@ -28,7 +29,8 @@ router.get("/", (req, res) =>
             leftToBeAssigned: count.getLeftToBeAssigned(),
             leftToActivate: count.getLeftToActivate(),
             firstEpochBlock: count.getFirstEpochBlock(),
-            lastEpochBlock: count.getLastEpochBlock()
+            lastEpochBlock: count.getLastEpochBlock(),
+            epochNumber: count.getEpochNumber()
         });
 });
 
