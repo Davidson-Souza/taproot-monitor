@@ -13,7 +13,7 @@ if(count.getStarted())
     cathUp.catchUp()
     .then((res) =>
     {
-        count.setCount(res.count, res.total);
+        count.setCount(res.count, res.total, res.firstEpochBlock, res.lastEpochBlock);
     });
 }
 router.get("/", (req, res) =>
@@ -26,7 +26,9 @@ router.get("/", (req, res) =>
             count: count.getCount(),
             windowTotal: count.getWindowTotal(),
             leftToBeAssigned: count.getLeftToBeAssigned(),
-            leftToActivate: count.getLeftToActivate()
+            leftToActivate: count.getLeftToActivate(),
+            firstEpochBlock: count.getFirstEpochBlock(),
+            lastEpochBlock: count.getLastEpochBlock()
         });
 });
 

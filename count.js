@@ -34,7 +34,7 @@ function toHexString(byteArray) {
   }).join('')
 }
 
-var assignedCount = 0, totalSoFar = 0, assignedThisEpoch = 0, epoch = 1, totalEpoch = 0;
+var assignedCount = 0, totalSoFar = 0, assignedThisEpoch = 0, epoch = 1, totalEpoch = 0, firstEpochBlock = 0, lastEpochBlock = 0;
 
 // Handle ZMQ's notifications
 sock.on("message", function(topic, message) 
@@ -97,6 +97,18 @@ module.exports =
     {
         return totalEpoch;
     },
+    getFirstEpochBlock: () =>
+    {
+        return firstEpochBlock;
+    },
+    getLastEpochBlock: () =>
+    {
+        return lastEpochBlock;
+    },
+    getEpochNumber: () =>
+    {
+        return epoch;
+    },
     // How many blocks we still have inside the window?
     getLeftToBeAssigned: () =>
     {        
@@ -108,9 +120,11 @@ module.exports =
         precision = Math.pow(10, 0) 
         return Math.ceil(( EPOCH_SPAN * MIN_THRESHOLD ) - assignedThisEpoch * precision) / precision
     },
-    setCount: (_assigned, _total) =>
+    setCount: (_assigned, _total, _firstBlock, _lastBlock) =>
     {
         assignedThisEpoch += _assigned;
         totalEpoch += _total;
+        firstEpochBlock = _firstBlock;
+        lastEpochBlock = _lastBlock;
     }
 }

@@ -76,7 +76,7 @@ module.exports =
                 const firstEpochBlock = (tip - (tip % EPOCH_SPAN));
                 countBlocks(firstEpochBlock, tip, 0, c =>
                     {
-                        resolve({count:c, total:(tip - firstEpochBlock) + 1})
+                        resolve({count:c, total:(tip - firstEpochBlock) + 1, firstEpochBlock, lastEpochBlock:(firstEpochBlock + EPOCH_SPAN)})
                     })
                 // Find the firs block within the window
 /*                findTheFirstBlockOfTheWindow(tip, (height) =>
